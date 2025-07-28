@@ -1,0 +1,278 @@
+index.html 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard: Análise de Dados para E-Commerce de Moda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .tooltip-info {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        .tooltip-info .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Posição acima do texto */
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip-info .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        .tooltip-info:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-purple-800 mb-2">📊 Dados que Vendem: Impulsionando seu E-Commerce de Moda</h1>
+            <p class="text-lg text-gray-700">Análise Estratégica para Otimização de Vendas, Clientes e Estoque</p>
+        </header>
+
+        <!-- Seção de KPIs (Métricas Chave) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="card bg-white p-6 rounded-xl shadow-lg border border-purple-100">
+                <h3 class="text-gray-600 font-semibold text-sm mb-1">Receita Total (Últimos 6 meses)</h3>
+                <p class="text-3xl font-bold text-green-700">R$ 185.750</p>
+                <span class="text-sm text-gray-500">↑ 12% vs. período anterior</span>
+            </div>
+            <div class="card bg-white p-6 rounded-xl shadow-lg border border-blue-100">
+                <h3 class="text-gray-600 font-semibold text-sm mb-1">Pedidos Realizados</h3>
+                <p class="text-3xl font-bold text-blue-700">2.150</p>
+                <span class="text-sm text-gray-500">Média de 358 pedidos/mês</span>
+            </div>
+            <div class="card bg-white p-6 rounded-xl shadow-lg border border-orange-100">
+                <h3 class="text-gray-600 font-semibold text-sm mb-1">Ticket Médio</h3>
+                <p class="text-3xl font-bold text-orange-700">R$ 86,39</p>
+                <span class="text-sm text-gray-500">Meta: R$ 90,00</span>
+            </div>
+            <div class="card bg-white p-6 rounded-xl shadow-lg border border-red-100">
+                <h3 class="text-gray-600 font-semibold text-sm mb-1">Taxa de Abandono de Carrinho</h3>
+                <p class="text-3xl font-bold text-red-700">68%</p>
+                <span class="text-sm text-gray-500">Oportunidade de recuperação</span>
+            </div>
+        </div>
+
+        <!-- Gráficos de Análise -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+            <!-- Vendas Mensais -->
+            <div class="card bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Evolução da Receita Mensal</h3>
+                <canvas id="revenueChart"></canvas>
+                <p class="text-sm text-gray-500 mt-4">
+                    <span class="tooltip-info">Pico em Março<span class="tooltiptext">Campanha de Outono/Inverno e Dia da Mulher impulsionaram as vendas.</span></span> e queda em Junho (baixa sazonalidade).
+                </p>
+            </div>
+
+            <!-- Produtos Mais Vendidos por Categoria -->
+            <div class="card bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Top 5 Produtos por Receita</h3>
+                <canvas id="topProductsChart"></canvas>
+                <p class="text-sm text-gray-500 mt-4">
+                    <span class="tooltip-info">Calças Jeans<span class="tooltiptext">Produto carro-chefe, alta margem e demanda constante.</span></span> e <span class="tooltip-info">Blusas de Tricô<span class="tooltiptext">Vendas sazonais, mas com alto valor agregado.</span></span> dominam, indicando foco em peças-chave.
+                </p>
+            </div>
+
+            <!-- Vendas por Região (Exemplo de Segmentação de Clientes) -->
+            <div class="card bg-white p-6 rounded-xl shadow-lg col-span-full">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Distribuição de Vendas por Região (Top 3 Estados)</h3>
+                <canvas id="regionSalesChart"></canvas>
+                <p class="text-sm text-gray-500 mt-4">
+                    <span class="tooltip-info">São Paulo e Rio de Janeiro<span class="tooltiptext">Grandes centros urbanos com maior poder de compra e densidade populacional.</span></span> concentram a maior parte das vendas. Oportunidade de campanhas segmentadas para o Sul.
+                </p>
+            </div>
+        </div>
+
+        <!-- Insights Acionáveis e Recomendações -->
+        <div class="card bg-white p-8 rounded-xl shadow-lg border-t-4 border-purple-500">
+            <h2 class="text-2xl font-bold text-purple-800 mb-6">💡 Insights Acionáveis e Recomendações Estratégicas</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">1. Otimização de Estoque e Previsão de Demanda:</h3>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>**Problema:** Excesso de estoque de "Saias Plissadas" (150 unidades paradas há > 90 dias).</li>
+                        <li>**Insight:** Demanda por "Saias Plissadas" caiu 40% no último trimestre.</li>
+                        <li>**Ação Recomendada:** Crie uma promoção "Leve 2 Pague 1" ou "Liquidação de Inverno" para Saias Plissadas. Use dados históricos para prever a demanda de coleções futuras e evitar excessos.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">2. Personalização e Cross-Selling:</h3>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>**Insight:** 70% dos clientes que compram "Calças Jeans" também compram "Cintos de Couro".</li>
+                        <li>**Ação Recomendada:** Implemente recomendações de produtos "Compre Junto" na página do produto e no carrinho. Envie e-mails pós-compra de Calças Jeans oferecendo Cintos de Couro com desconto.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">3. Recuperação de Carrinhos Abandonados:</h3>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>**Problema:** Alta taxa de abandono de carrinho (68%).</li>
+                        <li>**Insight:** 45% dos abandonos ocorrem na etapa de frete.</li>
+                        <li>**Ação Recomendada:** Envie e-mails de recuperação de carrinho com um lembrete e, para carrinhos de alto valor, ofereça frete grátis ou um pequeno desconto para incentivar a finalização da compra.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">4. Segmentação de Clientes para Campanhas:</h3>
+                    <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                        <li>**Insight:** Clientes do Sul do Brasil têm maior ticket médio em produtos de inverno.</li>
+                        <li>**Ação Recomendada:** Crie campanhas de e-mail marketing e anúncios pagos segmentados para a região Sul, destacando produtos de inverno e promoções exclusivas para essa audiência.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-gray-500 text-sm mt-10">
+            <p>Desenvolvido para a palestra "Dados que Vendem: Como a Análise de Dados Pode Impulsionar seu E-Commerce"</p>
+            <p>Simulação de dados para fins demonstrativos.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dados Simulados (mais realistas para e-commerce de moda)
+        const monthlyRevenue = {
+            labels: ['Dez/23', 'Jan/24', 'Fev/24', 'Mar/24', 'Abr/24', 'Mai/24'],
+            datasets: [{
+                label: 'Receita (R$)',
+                data: [25000, 28000, 35000, 42000, 30000, 25750], // Queda em Mai/24 simulando baixa sazonalidade ou fim de coleção
+                backgroundColor: 'rgba(124, 58, 237, 0.6)',
+                borderColor: 'rgba(124, 58, 237, 1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        };
+
+        const topProductsRevenue = {
+            labels: ['Calça Jeans Skinny', 'Blusa de Tricô Gola Alta', 'Vestido Floral Verão', 'Jaqueta Corta Vento', 'Tênis Casual Branco'],
+            datasets: [{
+                label: 'Receita Gerada (R$)',
+                data: [35000, 28000, 22000, 18000, 15000],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)', // Vermelho
+                    'rgba(54, 162, 235, 0.8)', // Azul
+                    'rgba(255, 206, 86, 0.8)', // Amarelo
+                    'rgba(75, 192, 192, 0.8)', // Verde Água
+                    'rgba(153, 102, 255, 0.8)' // Roxo
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const regionSales = {
+            labels: ['São Paulo', 'Rio de Janeiro', 'Minas Gerais', 'Paraná', 'Bahia'],
+            datasets: [{
+                label: 'Receita (R$)',
+                data: [70000, 45000, 30000, 20000, 10750],
+                backgroundColor: [
+                    'rgba(79, 70, 229, 0.7)', // Indigo
+                    'rgba(139, 92, 246, 0.7)', // Violet
+                    'rgba(236, 72, 153, 0.7)', // Pink
+                    'rgba(16, 185, 129, 0.7)', // Emerald
+                    'rgba(245, 158, 11, 0.7)'  // Amber
+                ],
+                borderColor: [
+                    'rgba(79, 70, 229, 1)',
+                    'rgba(139, 92, 246, 1)',
+                    'rgba(236, 72, 153, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // Configuração dos Gráficos
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: monthlyRevenue,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Receita (R$)' } },
+                    x: { title: { display: true, text: 'Mês' } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('topProductsChart'), {
+            type: 'bar',
+            data: topProductsRevenue,
+            options: {
+                indexAxis: 'y', // Barras horizontais
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { beginAtZero: true, title: { display: true, text: 'Receita Gerada (R$)' } },
+                    y: { title: { display: true, text: 'Produto' } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('regionSalesChart'), {
+            type: 'doughnut',
+            data: regionSales,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed) {
+                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
